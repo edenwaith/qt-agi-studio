@@ -32,6 +32,10 @@
 #include "options.h"
 #include "helpwindow.h"
 
+// Next two lines used for debugging purposes
+#include <QDebug>
+#include <QImageReader>
+
 #include <stdio.h>
 #ifdef _WIN32
   #include <direct.h>
@@ -87,7 +91,12 @@ Menu::Menu( QWidget *parent, const char *name )
   int n=0;
 
   setCaption("AGI Studio");
+
+  // For non-Mac systems, set the application icon to app_icon
+#if defined(Q_OS_MAC) == false
   setIcon((const char**)app_icon);
+#endif
+
 
   Q3PopupMenu *new_game = new Q3PopupMenu( this );
   Q_CHECK_PTR( new_game );
@@ -99,7 +108,7 @@ Menu::Menu( QWidget *parent, const char *name )
   Q_CHECK_PTR( game );
 
   game->insertItem ( "&New", new_game );
-  game->insertItem ( "&Open", this, SLOT(open_game()) );
+  game->insertItem ( "&Open", this, SLOT(open_game()), Qt::CTRL+Qt::Key_O );
   id[n++] = game->insertItem ( "&Close", this, SLOT(close_game()) );
   id[n++] = game->insertItem ( "&Run", this, SLOT(run_game()), Qt::CTRL+Qt::Key_R );
   game->insertSeparator();
@@ -292,6 +301,7 @@ void Menu::enable()
 //**********************************************
 void Menu::open_game()
 {
+    qDebug() << "open_game";
   OpenGameDir( 0, false );
 }
 
@@ -863,7 +873,6 @@ void Menu::load_imgext()
   //QT image extensions - to handle more image formats
   //currently it is only jpg and it doesn't work well anyway
 {
-
   qInitImageIO() ;
   imgext = true;
 
@@ -880,6 +889,40 @@ About::About(QWidget *parent, const char *name )
   Q3BoxLayout *all = new Q3VBoxLayout(this,2);
 
   QLabel *alogo = new QLabel(this);
+
+  /*
+  // Results: ("bmp", "gif", "ico", "jpeg", "jpg", "mng", "pbm", "pgm", "png", "ppm", "svg", "svgz", "tga", "tif", "tiff", "xbm", "xpm")
+  qDebug() << QImageReader::supportedImageFormats();
+
+  QImage logoImage;
+  bool imageLoaded = logoImage.load(":/images/logoAbout.png");
+  QPixmap logoPicture = QPixmap::fromImage(logoImage); //  (":/logoAbout.png");
+
+  if (imageLoaded == true) {
+      qDebug() << "The QImage loaded";
+  } else {
+      qDebug() << "The QImage did NOT load";
+  }
+
+  QIcon icon = QIcon(":/images/logoAbout.png");
+
+  if (icon.isNull()) {
+      qDebug() << "Sorry, charlie, the icon is NULL";
+  } else {
+      qDebug() << "Supposedly, the icon is NOT NULL";
+  }
+
+  if (logoPicture.isNull()) {
+      qDebug() << "logoAbout is NULL!";
+  } else {
+      qDebug() << "Supposedly logoAbout loaded.";
+  }
+
+
+  // alogo->setPixmap(QPixmap(icon));
+  // alogo->setPixmap(QPixmap(QString::fromUtf8(":/images/logoAbout.png")));
+  */
+
   alogo->setPixmap(QPixmap(logo));
   alogo->setAlignment( Qt::AlignHCenter );
   alogo->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum ));
@@ -889,7 +932,7 @@ About::About(QWidget *parent, const char *name )
   about->setTextFormat(Qt::RichText);
   about->setReadOnly(true);
   about->setText(
-    "<center><b>QT AGI studio v. 1.3.0</b><br>"
+    "<center><b>QT AGI Studio v. 1.3.0</b><br>"
     "http://agistudio.sourceforge.net/<br>"
     "<br>"
     "<b>Authors:</b><br>"
@@ -903,6 +946,9 @@ About::About(QWidget *parent, const char *name )
     "<br>"
     "<b>Windows port by:</b><br>"
     "Nat Budin (natb@brandeis.edu)"
+    "<br><br>"
+    "<b>Macintosh port by:</b><br>"
+    "Chad Armstrong (chad@edenwaith.com)"
     "<br><br></center>"
     "This program is free software; you can "
     "redistribute it and/or modify it under "
