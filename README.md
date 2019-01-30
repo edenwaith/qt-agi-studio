@@ -17,7 +17,8 @@ library support.
 Availability
 ============
 
-QT AGI Studio is available at http://agistudio.sourceforge.net/
+QT AGI Studio is available at [http://agistudio.sourceforge.net/](http://agistudio.sourceforge.net/)   
+The Macintosh version of QT AGI Studio is available at [https://github.com/edenwaith/qt-agi-studio](https://github.com/edenwaith/qt-agi-studio)  
 The project is licensed under the GPL, GNU General Public License.
 See COPYING for details.
 
@@ -25,9 +26,10 @@ See COPYING for details.
 System requirements
 ===================
 
-Linux:  GNU make, g++, X Window System, QT library
+Linux:  GNU make, g++, X Window System, QT library  
+Macintosh: Xcode, Qt Creator, QT library  
 
-The program is now being developed with QT version 4
+The program is now being developed with QT version 4.
 
 NAGI, Sarien or ScummVM AGI interpreter is recommended to run games.
 Sarien is available at http://sarien.sourceforge.net/
@@ -45,41 +47,43 @@ Visual Studio project and send a patch!
 Building
 ========
 Run "make" in the src subdirectory. If the supplied Makefile doesn't work,
-you can either fix it or use tmake to generate a makefile for your platform:
+you can either fix it or use `tmake` to generate a makefile for your platform:
 
- qmake agistudio.pro -o Makefile
+` qmake agistudio.pro -o Makefile`
 
-If you don't have tmake, you can download it at http://www.trolltech.com
+If you don't have `tmake`, you can download it at http://www.trolltech.com
 
-Make assumes that QT4 is installed and working (in particular, the QTDIR
+Make assumes that QT4 is installed and working (in particular, the `QTDIR`
 environment variable is properly set)
 
 * Troubleshooting
 
 Install missing *qmake*
 
-sudo apt-get install qt4-qmake
+`sudo apt-get install qt4-qmake`
 
 Project ERROR: Unknown module(s) in QT: qt3support
 
  It needs to be qt3support. You may need to use qmake-qt4 explicitly:
 
-qmake-qt4 "QT += qt3support" agistudio.pro -o Makefile
+`qmake-qt4 "QT += qt3support" agistudio.pro -o Makefile`
 
 Installation and setup
 ======================
 
 The binary is called agistudio and will be built in the src subdirectory; you
-can copy it to any path convenient to use (e.g. /usr/local/bin). In order to
+can copy it to any path convenient to use (e.g. `/usr/local/bin`). In order to
 use the help and an example game template, copy them to any convenient place
 and specify the appropriate paths in the "Settings" menu when you'll run
 agistudio.
+
+For the Macintosh version, place the AGI Studio.app into the Applications folder.
 
 AGI studio has its own help viewer, but you can also view the help with
 any HTML browser.
 
 If agistudio complains that it can't load qt shared library, then set the
-LD_LIBRARY_PATH environment variable to the path which contains libqt.so.*.
+`LD_LIBRARY_PATH` environment variable to the path which contains `libqt.so.*`.
 
 Using
 =====
@@ -95,6 +99,7 @@ Credits
  * Jarno Elonen <elonen@iki.fi> - bitmap import, current maintainer
 
  * Nat Budin <natb@brandeis.edu> - Win32 port
+ * Chad Armstrong <chad@edenwaith.com> - Macintosh port
  * Claudio Matsuoka <claudio@helllabs.org> - sound support
  * Peter Kelly <pmk@post.com> - the original Windows version
  * Lance Ewing <lance.e@ihug.co.nz> - the original (DOS) Picedit
