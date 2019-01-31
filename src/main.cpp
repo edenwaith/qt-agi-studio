@@ -31,7 +31,7 @@ QApplication *app;
 char tmp[MAX_TMP]; //global temporary buffer
 
 static char help[]=
-"QT AGI Studio v1.1.\n\
+"QT AGI Studio v1.3.0.\n\
 A Sierra On-Line(tm) adventure game creator and editor.\n\
 \n\
 Usage: agistudio [switches] \n\
@@ -42,6 +42,14 @@ where [switches] are optionally:\n\
 -help          : this message\n\
 \n";
 
+// Check if the string str is prefixed with the string pre
+bool startsWith(const char *pre, const char *str)
+{
+    size_t lenpre = strlen(pre),
+                   lenstr = strlen(str);
+    return lenstr < lenpre ? false : strncmp(pre, str, lenpre) == 0;
+}
+
 //***************************************************
 int main( int argc, char **argv )
 {
@@ -49,15 +57,24 @@ int main( int argc, char **argv )
   
   tmp[0]=0;
 
-  for(int i=1;i<argc;i++){
-    if(argv[i][0] == '-'){
-      if(!strcmp(argv[i]+1,"dir")){
+  for(int i=1;i<argc;i++) {
+
+    if (argv[i][0] == '-') {
+      if (!strcmp(argv[i]+1,"dir")) {
         gamedir = argv[i+1];
       }
       else
       {
-        if(strcmp(argv[i]+1,"help")!=0 && strcmp(argv[i]+1,"-help")!=0)
-          printf( "Unknown parameter.\n\n" );
+          // On older versions of Mac OS X, launching the app bundle will include
+          // a psn argument, like -psn_0_1446241.  Ignore this and break out of
+          // this conditional statement so the app will launch.
+          if (startsWith("-psn", argv[i])) {
+              // printf("Yes, the argument starts with -psn\n");
+              break;
+          }
+        else if(strcmp(argv[i]+1,"help")!=0 && strcmp(argv[i]+1,"-help")!=0) {
+          printf( "Unknown parameter %s.\n\n", argv[i]+1 );
+          }
         printf(help);
         exit(-2);
       }

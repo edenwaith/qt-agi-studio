@@ -1,8 +1,16 @@
 TEMPLATE = app
-CONFIG	 = qt warn_on release thread
-#CONFIG  = qt warn_on debug thread
+#CONFIG	 = qt warn_on release thread
+CONFIG  = qt warn_on debug thread
+
+# mac:CONFIG += app_bundle
+CONFIG += app_bundle
+ICON = application.icns
+
 # DEFINES += QT_DLL QT_THREAD_SUPPORT # win32
-QMAKE_CXXFLAGS += -Wno-unused-result
+# QMAKE_CXXFLAGS += -Wno-unused-result # -spec macx-g++
+
+# OTHER_FILES += app_icon_red.png
+
 HEADERS	 = agicommands.h \
 		dir.h \
 		game.h \
@@ -59,5 +67,10 @@ SOURCES  = agicommands.cpp \
 		bmp2agipic.cpp
 TARGET   = agistudio
 
+RESOURCES += \
+    agistudio.qrc
+
 #The following line was inserted by qt3to4
 QT +=  qt3support 
+
+
