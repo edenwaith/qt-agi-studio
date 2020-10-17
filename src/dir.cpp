@@ -54,7 +54,7 @@ void OpenGameDir( QWidget *parent, bool newgame )
   if(newgame)
   {
     int game_exists;
-    sprintf(tmp,"%s/*vol.?",name.c_str());   //check for an existing game
+    sprintf(tmp,"%s/*VOL.?",name.c_str());   //check for an existing game
 #ifdef _WIN32
     struct _finddata_t c_file;
     long hFile;

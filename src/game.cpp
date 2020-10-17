@@ -148,7 +148,7 @@ int Game::open(string name)
       }
     }
   }
-  else{  //V3 game: open [GAME_ID]dir (e.g. grdir, mhdir)
+  else{  //V3 game: open [GAME_ID]dir (e.g. kq4dir, grdir, mhdir, mh2dir)
     string DIRFilename = dir + "/"+ID + "dir";
     fptr=fopen(DIRFilename.c_str(),"rb");
     if(fptr==NULL){
@@ -457,7 +457,7 @@ string Game::FindAGIV3GameID(const char *name)
 #endif
   char dirString[10]="", volString[10]="";
 
-  sprintf(tmp,"%s/*dir",name);
+  sprintf(tmp,"%s/*DIR",name);
 #ifdef _WIN32
   if ((hFile = _findfirst(tmp, &c_file)) == -1L) {
 #else
@@ -482,7 +482,7 @@ string Game::FindAGIV3GameID(const char *name)
   globfree(&globbuf);
 #endif
 
-  sprintf(tmp,"%s/*vol.0",name);
+  sprintf(tmp,"%s/*VOL.0",name);
 
 #ifdef _WIN32
   if ((hFile = _findfirst(tmp, &c_file)) == -1L) {
@@ -1374,6 +1374,10 @@ void Game::defaults()
   sprintf(helpdir_c,"%s/help",mydir);
   templatedir = templatedir_c;
   helpdir = helpdir_c;
+#elif defined(Q_OS_MAC) == true
+  command="nagi ./ || sarien -e -H 0 ./";
+  templatedir="/usr/share/agistudio/template";
+  helpdir="../Resources/AGI Studio Help";
 #else
   command="nagi ./ || sarien -e -H 0 ./";
   templatedir="/usr/share/agistudio/template";

@@ -272,9 +272,15 @@ LogEdit::LogEdit( QWidget *parent, const char *name, int win_num, ResourcesWin *
     file->insertItem( "Read from file", this, SLOT(read_logic()) );
     file->insertItem( "Save", this, SLOT(save_logic()), Qt::CTRL + Qt::Key_S );
     file->insertItem( "Save as", this, SLOT(save_as()) );
+#if defined(Q_OS_MAC) == true
+    file->insertItem( "Compile", this, SLOT(compile_logic()), Qt::CTRL+Qt::Key_B );
+    file->insertItem( "Compile all", this, SLOT(compile_all_logic()), Qt::CTRL + Qt::SHIFT + Qt::Key_B );
+    file->insertItem( "Compile all and run", this, SLOT(compile_and_run()), Qt::CTRL + Qt::SHIFT + Qt::Key_R );
+#else
     file->insertItem( "Compile", this, SLOT(compile_logic()) ,Qt::Key_F9 );
     file->insertItem( "Compile all", this, SLOT(compile_all_logic())  );
     file->insertItem( "Compile all and run", this, SLOT(compile_and_run()) ,Qt::Key_F10 );
+#endif
     file->insertItem( "Change logic number", this, SLOT(change_logic_number()) );
     file->insertSeparator();
     file->insertItem( "Delete", this, SLOT(delete_logic()) );
