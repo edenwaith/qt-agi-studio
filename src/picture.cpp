@@ -1259,7 +1259,7 @@ int Picture::button_action(int newX, int newY)
       addCode(clickX>>1);
       addCode(clickY);
       ret=1;
-      [[fallthrough]];
+      // [[fallthrough]];
     default:
       addCode(newX>>1);
       addCode(newY);
@@ -1285,7 +1285,7 @@ int Picture::button_action(int newX, int newY)
       addCode(0xF7);
       addCode(clickX>>1);
       addCode(clickY);
-      [[fallthrough]];
+      // [[fallthrough]]; // Perhaps put in an ifdef to avoid for Mac
     default:
       if (dX < 0) disp = (0x80 | ((((-1)*dX)-0) << 4));
       else disp = (dX << 4);

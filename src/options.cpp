@@ -198,7 +198,7 @@ void Options::apply()
   else{
     game->srcdirname=string((char *)absname->text().latin1());
   }
-  game->templatedir=string((char *)templatedir->text().latin1());
+  game->get_templatedir()=string((char *)templatedir->text().latin1());
   game->helpdir=string((char *)helpdir->text().latin1());
   game->picstyle=picstyle->currentItem();
   game->save_settings();
@@ -218,7 +218,6 @@ void Options::defaults()
 //***********************************************
 void Options::set_settings()
 {
-
   type->setCurrentItem(game->res_default);
   text->setChecked(game->save_logic_as_text);  
   messages->setChecked(game->show_all_messages);
@@ -235,7 +234,8 @@ void Options::set_settings()
     absname->setText(game->srcdirname.c_str());
     relname->clear();
   }      
-  templatedir->setText(game->templatedir.c_str());
+
+  templatedir->setText(game->get_templatedir().c_str());
   helpdir->setText(game->helpdir.c_str());
   picstyle->setCurrentItem(game->picstyle);
 }

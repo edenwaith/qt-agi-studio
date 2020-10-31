@@ -77,7 +77,7 @@ class Menu : public Q3MainWindow
     Q_OBJECT
 public:
     Menu( QWidget *parent=0, const char *name=0);
-    QStatusBar *status;
+    // QStatusBar *status;
     ResourcesWin *resources_win;
     void errmes(const char *, const char *,...);
     void errmes(const char *,...);

@@ -51,6 +51,8 @@ class Game
   void save_settings();
   void read_settings();
   void defaults();
+  string get_templatedir();
+  string get_helpdir();
   void make_source_dir();
   int GetResourceSize(char ResType,int ResNum);
   int ReadResource(char ResourceType, int ResourceID);

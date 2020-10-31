@@ -50,6 +50,7 @@
 #include <q3progressdialog.h>
 #include <qmessagebox.h>
 #include <qdir.h>
+#include <QCoreApplication.h>
 
 const char *ResTypeName[4] = {"logic","picture","view","sound"};
 const char *ResTypeAbbrv[4] = {"log","pic","view","snd"};
@@ -225,7 +226,7 @@ int Game::open(string name)
     CorrectCommands(AGIVersionNumber);
     isOpen = true;
     make_source_dir();
-    menu->status->message(dir.c_str());
+    // menu->status->message(dir.c_str());
     return 0;
   }
   else return 1;
@@ -279,7 +280,6 @@ int copy(char *src,char *dest)
 int Game::from_template(string name)
   //create a new game (in 'name' directory) from template
 {
-
   int i;
   char *ptr;
   struct stat buf;
@@ -289,15 +289,16 @@ int Game::from_template(string name)
   make_source_dir();
 
   //check if template directory contains *dir files and vol.0
-  for(i=0;i<5;i++){
-    sprintf(tmp,"%s/%s",templatedir.c_str(),files[i]);
-    if(stat(tmp,&buf)){
-      menu->errmes("AGI Studio error", "Can't read %s in template directory %s !",files[i],templatedir.c_str());
+  for (i=0;i<5;i++) {
+    sprintf(tmp,"%s/%s", this->get_templatedir().c_str(), files[i]);
+
+    if (stat(tmp,&buf)) {
+      menu->errmes("AGI Studio error", "Can't read %s in template directory %s !", files[i], this->get_templatedir().c_str());
       return 1;
     }
   }
 
-  sprintf(tmp,"%s/*",templatedir.c_str());
+  sprintf(tmp,"%s/*",this->get_templatedir().c_str());
 #ifdef _WIN32
   struct _finddata_t c_file;
   long hFile;
@@ -434,7 +435,7 @@ int Game::newgame(string name)
       ResourceInfo[_i][j].Exists = false;
     }
   }
-  menu->status->message(dir.c_str());
+  // menu->status->message(dir.c_str());
   return 0;
 }
 
@@ -1346,6 +1347,7 @@ int Game::ReadV3Resource(char ResourceType1_c, int ResourceID1)
   return 0;
 
 }
+
 //*********************************************************
 void Game::defaults()
 {
@@ -1376,7 +1378,7 @@ void Game::defaults()
   helpdir = helpdir_c;
 #elif defined(Q_OS_MAC) == true
   command="nagi ./ || sarien -e -H 0 ./";
-  templatedir="/usr/share/agistudio/template";
+  templatedir="../Resources/template";
   helpdir="../Resources/AGI Studio Help";
 #else
   command="nagi ./ || sarien -e -H 0 ./";
@@ -1385,6 +1387,31 @@ void Game::defaults()
 #endif
   picstyle=P_ONE;
 }
+
+//*********************************************************
+// Get the path to the template files contained with the Mac
+// app bundle's Resources folder
+string Game::get_templatedir()
+{
+    sprintf(tmp,"%s/%s/",  QCoreApplication::applicationDirPath().toStdString().c_str(), this->templatedir.c_str());
+    QFileInfo tempFile(tmp);
+    QString absolutePath = tempFile.absolutePath();
+
+    return absolutePath.toStdString();
+}
+
+//*********************************************************
+// Get the path to the help files contained with the Mac
+// app bundle's Resources folder
+string Game::get_helpdir()
+{
+    sprintf(tmp,"%s/%s/index.html",  QCoreApplication::applicationDirPath().toStdString().c_str(), this->helpdir.c_str());
+    QFileInfo tempFile(tmp);
+    QString absolutePath = tempFile.absolutePath();
+
+    return absolutePath.toStdString();
+}
+
 //*********************************************************
 void Game::read_settings()
   //read ~/.agistudio file

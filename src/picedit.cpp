@@ -186,7 +186,7 @@ PicEdit::PicEdit( QWidget *parent, const char *name,int win_num,ResourcesWin *re
 
   Q3GroupBox *lsize = new Q3GroupBox(1,Qt::Vertical,this);
   lsize->setTitle("Size");
-  lsize->setMargin(4);
+  lsize->setMargin(20); // Add extra margins so the text box is centered
   b2->addWidget(lsize);
 
   QSpinBox *size = new QSpinBox(1,7,1,lsize);
@@ -240,7 +240,7 @@ PicEdit::PicEdit( QWidget *parent, const char *name,int win_num,ResourcesWin *re
   comments->setFocusPolicy(Qt::NoFocus);
   b31->addWidget(comments);
 
-  Q3BoxLayout *b4 = new Q3HBoxLayout(leftb,2);
+  Q3BoxLayout *b4 = new Q3HBoxLayout(leftb, 13);
 
   QPushButton *zoom_minus = new QPushButton(this);
   zoom_minus->setPixmap(QPixmap(zoom_minus_x));
@@ -281,16 +281,16 @@ PicEdit::PicEdit( QWidget *parent, const char *name,int win_num,ResourcesWin *re
 
   if(game->picstyle==P_TWO){
     canvas = new PCanvas(0,0,this);
-    canvas->setMinimumSize(canvas->pixsize*MAX_W+canvas->x0+10,canvas->pixsize*MAX_HH+canvas->x0+10);
-    canvas->resizeContents(canvas->pixsize*MAX_W+canvas->x0,canvas->pixsize*MAX_HH+canvas->x0);
-    canvas->resize(canvas->pixsize*MAX_W+canvas->x0,canvas->pixsize*MAX_HH+canvas->x0);
+    canvas->setMinimumSize(canvas->pixsize*MAX_W+canvas->x0+20,canvas->pixsize*MAX_HH+canvas->x0+10);
+    canvas->resizeContents(canvas->pixsize*MAX_W+canvas->x0+10,canvas->pixsize*MAX_HH+canvas->x0);
+    canvas->resize(canvas->pixsize*MAX_W+canvas->x0+10,canvas->pixsize*MAX_HH+canvas->x0);
     //canvas->setFocusPolicy(ClickFocus);
 
   }
   else{
     canvas = new PCanvas(this,0,this);
-    canvas->setMinimumSize(canvas->pixsize*MAX_W+canvas->x0+10,canvas->pixsize*MAX_HH+canvas->x0+10);
-    canvas->resizeContents(canvas->pixsize*MAX_W+canvas->x0,canvas->pixsize*MAX_HH+canvas->x0);
+    canvas->setMinimumSize(canvas->pixsize*MAX_W+canvas->x0+20,canvas->pixsize*MAX_HH+canvas->x0+10);
+    canvas->resizeContents(canvas->pixsize*MAX_W+canvas->x0+10,canvas->pixsize*MAX_HH+canvas->x0);
     all->addWidget(canvas,1);
     //canvas->setFocusPolicy(ClickFocus);
     setFocusProxy(canvas);

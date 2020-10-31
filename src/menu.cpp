@@ -87,7 +87,11 @@ Menu::Menu( QWidget *parent, const char *name )
   int n=0;
 
   setCaption("AGI Studio");
+
+  // For non-Mac systems, set the application icon to app_icon
+#if defined(Q_OS_MAC) == false
   setIcon((const char**)app_icon);
+#endif
 
   Q3PopupMenu *new_game = new Q3PopupMenu( this );
   Q_CHECK_PTR( new_game );
@@ -99,7 +103,7 @@ Menu::Menu( QWidget *parent, const char *name )
   Q_CHECK_PTR( game );
 
   game->insertItem ( "&New", new_game );
-  game->insertItem ( "&Open", this, SLOT(open_game()) );
+  game->insertItem ( "&Open", this, SLOT(open_game()), Qt::CTRL+Qt::Key_O );
   id[n++] = game->insertItem ( "&Close", this, SLOT(close_game()) );
   id[n++] = game->insertItem ( "&Run", this, SLOT(run_game()), Qt::CTRL+Qt::Key_R );
   game->insertSeparator();
@@ -159,8 +163,8 @@ Menu::Menu( QWidget *parent, const char *name )
   menubar->insertItem( "&Help", help );
   menubar->setSeparator( QMenuBar::InWindowsStyle );
 
-
   Q3ToolBar *toolbar = new Q3ToolBar(this);
+
   open = new QPushButton(toolbar);
   open->setPixmap((const char**)toolbar_open);
   connect( open, SIGNAL(clicked()), SLOT(open_game()) );
@@ -210,10 +214,10 @@ Menu::Menu( QWidget *parent, const char *name )
   toolbar->setResizeEnabled(false);
   toolbar->show();
 
-  status = new QStatusBar(this);
-  QLabel *msg = new QLabel( status, "message" );
-  status->addWidget( msg, 4 );
-  status->setSizeGripEnabled(false);
+//  status = new QStatusBar(this);
+//  QLabel *msg = new QLabel( status, "message" );
+//  status->addWidget( msg, 4 );
+//  status->setSizeGripEnabled(false);
 
   err = new QMessageBox(NULL, "AGI Studio");
   err->setIcon(QMessageBox::Critical);
@@ -225,6 +229,7 @@ Menu::Menu( QWidget *parent, const char *name )
 
   max_disabled = n;
   disable();
+  open->setEnabled(true); // Enable the Open button
 
   adjustSize();
   setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ));
@@ -280,6 +285,8 @@ void Menu::enable()
   for(int i=0;i<max_disabled;i++){
     menubar->setItemEnabled( id[i], TRUE );
   }
+
+  open->setEnabled(true);
   close_->setEnabled(true);
   run->setEnabled(true);
   view->setEnabled(true);
@@ -737,7 +744,8 @@ void Menu::sound_player()
 void Menu::help_contents()
   //from QT examples (qbrowser)
 {
-  sprintf(tmp,"%s/index.html",game->helpdir.c_str());
+  sprintf(tmp, "%s/index.html", game->get_helpdir().c_str());
+
   if(helpwindow==NULL){
     int n;
     if((n=get_win())==-1)return;
@@ -752,8 +760,8 @@ void Menu::help_contents()
 //**********************************************
 bool Menu::help_topic( const QString& topic )
 {
-  sprintf(tmp,"%s/%s.html",game->helpdir.c_str(),
-    QString(topic).replace(".", "_").latin1());
+  sprintf(tmp,"%s/%s.html", game->get_helpdir().c_str(),
+  QString(topic).replace(".", "_").latin1());
 
   if ( QFile( tmp ).exists())
   {
@@ -776,7 +784,7 @@ bool Menu::help_topic( const QString& topic )
 //**********************************************
 void Menu::help_index()
 {
-  sprintf(tmp,"%s/indexabc.html",game->helpdir.c_str());
+  sprintf(tmp,"%s/indexabc.html", game->get_helpdir().c_str());
   if(helpwindow1==NULL){
     int n;
     if((n=get_win())==-1)return;
@@ -897,13 +905,16 @@ About::About(QWidget *parent, const char *name )
     "Jarno Elonen (elonen@iki.fi)<br>"
     "<br>"
     "<b>and also:</b><br>"
-    "Chris Cromer (chris@cromer.cl)<br>"
     "Peter Kelly (pmk@post.com)<br>"
     "Lance Ewing (lance.e@ihug.co.nz)<br>"
     "Claudio Matsuoka (claudio@helllabs.org)<br>"
+    "Chris Cromer (chris@cromer.cl)<br>"
     "<br>"
     "<b>Windows port by:</b><br>"
     "Nat Budin (natb@brandeis.edu)"
+    "<br><br>"
+    "<b>Macintosh port by:</b><br>"
+    "Chad Armstrong (chad@edenwaith.com)"
     "<br><br></center>"
     "This program is free software; you can "
     "redistribute it and/or modify it under "
