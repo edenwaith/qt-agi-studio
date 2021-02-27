@@ -1,10 +1,10 @@
-QT AGI Studio, release 1.3.0
+QT AGI Studio, release 1.3.2
 
 About
 =====
 
 AGI (Adventure Game Interpreter) is the adventure game engine used by
-Sierra On-Line(tm) to create some of their early games. QT AGI Studio
+Sierra On-Line&trade; to create some of their early games. QT AGI Studio
 (formerly known as Linux AGI Studio) is a program which allows you to
 view, create and edit AGI games. Basically, it is an enhanced port of
 the Windows AGI Studio developed by Peter Kelly.
@@ -46,6 +46,7 @@ Visual Studio project and send a patch!
 
 Building
 ========
+
 Run "make" in the src subdirectory. If the supplied Makefile doesn't work,
 you can either fix it or use `tmake` to generate a makefile for your platform:
 
@@ -56,7 +57,7 @@ If you don't have `tmake`, you can download it at http://www.trolltech.com
 Make assumes that QT4 is installed and working (in particular, the `QTDIR`
 environment variable is properly set)
 
-* Troubleshooting
+**Troubleshooting**
 
 Install missing *qmake*
 
@@ -67,6 +68,7 @@ Project ERROR: Unknown module(s) in QT: qt3support
  It needs to be qt3support. You may need to use qmake-qt4 explicitly:
 
 `qmake-qt4 "QT += qt3support" agistudio.pro -o Makefile`
+
 
 Installation and setup
 ======================
@@ -98,6 +100,7 @@ Credits
  * Helen Zommer <helen@cc.huji.ac.il> - primary development
  * Jarno Elonen <elonen@iki.fi> - bitmap import, current maintainer
 
+ * Chris Cromer <chris@cromer.cl> - fix build for gcc 7 with 64bit
  * Nat Budin <natb@brandeis.edu> - Win32 port
  * Chad Armstrong <chad@edenwaith.com> - Macintosh port
  * Claudio Matsuoka <claudio@helllabs.org> - sound support
