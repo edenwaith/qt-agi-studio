@@ -1,0 +1,225 @@
+iff --git a/src/dir.cpp b/src/dir.cpp
+index 121d2b266b2d9a68e9a3034a7e5d5fdc5a3ed65d..ceb8343d6abe8ce13f940a19c339ea0e8d07d20c 100755
+--- a/src/dir.cpp
++++ b/src/dir.cpp
+@@ -54,7 +54,7 @@ void OpenGameDir( QWidget *parent, bool newgame )
+   if(newgame)
+   {
+     int game_exists;
+-    sprintf(tmp,"%s/*vol.?",name.c_str());   //check for an existing game
++    sprintf(tmp,"%s/*VOL.?",name.c_str());   //check for an existing game
+ #ifdef _WIN32
+     struct _finddata_t c_file;
+     long hFile;
+diff --git a/src/game.cpp b/src/game.cpp
+index acdcd897e772db93de6992510f4b4c4b76f77978..e88be62378574b17e5e9a6b164667e2cc5182514 100755
+--- a/src/game.cpp
++++ b/src/game.cpp
+@@ -51,6 +51,7 @@
+ #include <qmessagebox.h>
+ #include <qdir.h>
+ 
++
+ const char *ResTypeName[4] = {"logic","picture","view","sound"};
+ const char *ResTypeAbbrv[4] = {"log","pic","view","snd"};
+ static const char *files[5] = {"vol.0","viewdir","logdir","snddir","picdir"};
+@@ -101,37 +102,37 @@ int Game::open(string name)
+   dir=name;
+ 
+   ID = FindAGIV3GameID(dir.c_str());  // 'V2' if not found
+-  if(ID.length() == 0)return 1;
++  if (ID.length() == 0)return 1;
+ 
+   isV3 = (ID != "V2");
+   bool ErrorOccured = false;
+ 
+-  for(CurResType = 0;CurResType <= 3;CurResType++){
+-    for(CurResNum = 0;CurResNum <= 255; CurResNum++){
++  for (CurResType = 0;CurResType <= 3;CurResType++) {
++    for (CurResNum = 0;CurResNum <= 255; CurResNum++) {
+       ResourceInfo[CurResType][CurResNum].Exists = false;
+     }
+   }
+ 
+-  if(!isV3){
++  if (isV3 == false) {
+     //for V2 game: open logdir, picdir, viewdir, snddir
+-    for(CurResType = 0;CurResType <= 3; CurResType++){
++    for (CurResType = 0;CurResType <= 3; CurResType++) {
+       string DIRFilename = dir + "/"+ResTypeAbbrv[CurResType] + "dir";
+       fptr=fopen(DIRFilename.c_str(),"rb");
+-      if(fptr==NULL){
++      if (fptr==NULL) {
+         menu->errmes("Error: can't open %s !",DIRFilename.c_str());
+         ErrorOccured = true;
+         break;
+       }
+-      else{
++      else {
+         struct stat buf;
+         fstat(fileno(fptr),&buf);
+         int size=buf.st_size;
+-        if(size >  768){
++        if (size > 768) {
+           menu->errmes("Error: %s  is too big (should not be mode than 768 bytes) !",DIRFilename.c_str());
+           ErrorOccured = true;
+           break;
+         }
+-        else{      //read resource info
++        else {      // read resource info
+           fread(DirData,size,1,fptr);
+           for(CurResNum = 0;CurResNum <= size/3 -1;CurResNum++){
+             byte1 = DirData[CurResNum*3];
+@@ -148,7 +149,7 @@ int Game::open(string name)
+       }
+     }
+   }
+-  else{  //V3 game: open [GAME_ID]dir (e.g. grdir, mhdir)
++  else {  // V3 game: open [GAME_ID]dir (e.g. kq4dir, grdir, mhdir, mh2dir)
+     string DIRFilename = dir + "/"+ID + "dir";
+     fptr=fopen(DIRFilename.c_str(),"rb");
+     if(fptr==NULL){
+@@ -225,7 +226,7 @@ int Game::open(string name)
+     CorrectCommands(AGIVersionNumber);
+     isOpen = true;
+     make_source_dir();
+-    menu->status->message(dir.c_str());
++    // menu->status->message(dir.c_str());
+     return 0;
+   }
+   else return 1;
+@@ -440,14 +441,14 @@ int Game::newgame(string name)
+ 
+ //*******************************************
+ string Game::FindAGIV3GameID(const char *name)
+-  //compare the prefix for vol.0 and dir - if they are same and non-NULL
+-  //it is a V3 game
++  // compare the prefix for vol.0 and dir - if they are same and non-NULL
++  // it is a V3 game
+ {
+   string ID1;
+   char *ptr;
+   char *cfilename;
+ 
+-  ID1 = "V2";  //default for V2 games
++  ID1 = "V2";  //default for V2 game
+ 
+ #ifdef _WIN32
+   struct _finddata_t c_file;
+@@ -457,7 +458,7 @@ string Game::FindAGIV3GameID(const char *name)
+ #endif
+   char dirString[10]="", volString[10]="";
+ 
+-  sprintf(tmp,"%s/*dir",name);
++  sprintf(tmp,"%s/*DIR",name);
+ #ifdef _WIN32
+   if ((hFile = _findfirst(tmp, &c_file)) == -1L) {
+ #else
+@@ -482,7 +483,7 @@ string Game::FindAGIV3GameID(const char *name)
+   globfree(&globbuf);
+ #endif
+ 
+-  sprintf(tmp,"%s/*vol.0",name);
++  sprintf(tmp,"%s/*VOL.0",name);
+ 
+ #ifdef _WIN32
+   if ((hFile = _findfirst(tmp, &c_file)) == -1L) {
+@@ -1374,10 +1375,16 @@ void Game::defaults()
+   sprintf(helpdir_c,"%s/help",mydir);
+   templatedir = templatedir_c;
+   helpdir = helpdir_c;
++#elif defined(Q_OS_MAC) == true
++  command="nagi ./ || sarien -e -H 0 ./";
++  templatedir="/usr/share/agistudio/template";
++  helpdir="../Resources/AGI Studio Help";
+ #else
+   command="nagi ./ || sarien -e -H 0 ./";
+   templatedir="/usr/share/agistudio/template";
+-  helpdir="/usr/share/agistudio/help";
++  helpdir="../Resources/AGI Studio Help";
++  // helpdir="/usr/share/agistudio/help";
++  // "../Resources/AGI Studio Help"
+ #endif
+   picstyle=P_ONE;
+ }
+diff --git a/src/logedit.cpp b/src/logedit.cpp
+index 210d0012fe1b6fee8aa7581580bc370801f547d2..0f036f3f7fc70be164134609adce39acf0e7db65 100755
+--- a/src/logedit.cpp
++++ b/src/logedit.cpp
+@@ -272,9 +272,9 @@ LogEdit::LogEdit( QWidget *parent, const char *name, int win_num, ResourcesWin *
+     file->insertItem( "Read from file", this, SLOT(read_logic()) );
+     file->insertItem( "Save", this, SLOT(save_logic()), Qt::CTRL + Qt::Key_S );
+     file->insertItem( "Save as", this, SLOT(save_as()) );
+-    file->insertItem( "Compile", this, SLOT(compile_logic()) ,Qt::Key_F9 );
+-    file->insertItem( "Compile all", this, SLOT(compile_all_logic())  );
+-    file->insertItem( "Compile all and run", this, SLOT(compile_and_run()) ,Qt::Key_F10 );
++    file->insertItem( "Compile", this, SLOT(compile_logic()), Qt::CTRL+Qt::Key_B );
++    file->insertItem( "Compile all", this, SLOT(compile_all_logic()), Qt::CTRL + Qt::SHIFT + Qt::Key_B);
++    file->insertItem( "Compile all and run", this, SLOT(compile_and_run()) , Qt::CTRL + Qt::SHIFT + Qt::Key_R );
+     file->insertItem( "Change logic number", this, SLOT(change_logic_number()) );
+     file->insertSeparator();
+     file->insertItem( "Delete", this, SLOT(delete_logic()) );
+@@ -584,6 +584,8 @@ void LogEdit::read_logic()
+ }
+ 
+ //***********************************************
++// NOTE: Does this actually work?  Or should we use
++// the Game object's RecompileAll() method, instead?
+ int LogEdit::compile_all_logic()
+ {
+   int ret,err=0;
+diff --git a/src/main.cpp b/src/main.cpp
+index e6a4f8e87d99ef4d210ec27444a0f7ec2fc4cf25..e446da91569886719610432532f0346b4051a5e0 100755
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -31,7 +31,7 @@ QApplication *app;
+ char tmp[MAX_TMP]; //global temporary buffer
+ 
+ static char help[]=
+-"QT AGI Studio v1.3.0.\n\
++"QT AGI Studio v1.3.1.\n\
+ A Sierra On-Line(tm) adventure game creator and editor.\n\
+ \n\
+ Usage: agistudio [switches] \n\
+diff --git a/src/menu.cpp b/src/menu.cpp
+index 3f5fa9e4190bd79fc38d4e806240a05c27599d6d..b52fb369ad5cb90523a436083c0158c195d4be73 100755
+--- a/src/menu.cpp
++++ b/src/menu.cpp
+@@ -234,6 +234,7 @@ Menu::Menu( QWidget *parent, const char *name )
+ 
+   max_disabled = n;
+   disable();
++  open->setEnabled(true); // Enable the Open button
+ 
+   adjustSize();
+   setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ));
+@@ -289,6 +290,7 @@ void Menu::enable()
+   for(int i=0;i<max_disabled;i++){
+     menubar->setItemEnabled( id[i], TRUE );
+   }
++  open->setEnabled(true);
+   close_->setEnabled(true);
+   run->setEnabled(true);
+   view->setEnabled(true);
+@@ -747,7 +749,11 @@ void Menu::sound_player()
+ void Menu::help_contents()
+   //from QT examples (qbrowser)
+ {
+-  sprintf(tmp,"%s/index.html",game->helpdir.c_str());
++  // sprintf(tmp,"%s/index.html",game->helpdir.c_str());
++    // For some bizarre reason, it kept pointing to /usr/share/bin
++  sprintf(tmp,"%s/index.html", "../Resources/AGI Studio Help");
++  printf("tmp help directory:: %s\n", tmp);
++
+   if(helpwindow==NULL){
+     int n;
+     if((n=get_win())==-1)return;
+@@ -932,7 +938,7 @@ About::About(QWidget *parent, const char *name )
+   about->setTextFormat(Qt::RichText);
+   about->setReadOnly(true);
+   about->setText(
+-    "<center><b>QT AGI Studio v. 1.3.0</b><br>"
++    "<center><b>QT AGI Studio v. 1.3.1</b><br>"
+     "http://agistudio.sourceforge.net/<br>"
+     "<br>"
+     "<b>Authors:</b><br>"

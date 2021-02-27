@@ -2,3 +2,4 @@ src/Makefile
 src/*.o
 src/agistudio
 src/moc_*
+agistudio-build*
